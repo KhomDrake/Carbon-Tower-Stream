@@ -8,19 +8,19 @@ class StreamsController(private val apiController: ApiController) {
     fun routes() {
         path("/streams") {
             get(":quantity") {ctx ->
-                apiController.getStreamsQuantity(ctx.pathParam("quantity").toInt())
+                ctx.json(apiController.getStreamsQuantity(ctx.pathParam("quantity").toInt()))
             }
             get("game/:game_id") {ctx ->
-                apiController.getStreamsGameId(ctx.pathParam("game_id").toInt())
+                ctx.json(apiController.getStreamsGameId(ctx.pathParam("game_id").toInt()))
             }
             get("lang/:language") {ctx ->
-                apiController.getStreamsLanguage(ctx.pathParam("language"))
+                ctx.json(apiController.getStreamsLanguage(ctx.pathParam("language")))
             }
             get("/user-id/:user_id") {ctx ->
-                apiController.getStreamsUserId(ctx.pathParam("user_id").toInt())
+                ctx.json(apiController.getStreamsUserId(ctx.pathParam("user_id").toInt()))
             }
             get("/user-login/:user_login") {ctx ->
-                apiController.getStreamsUserLogin(ctx.pathParam("user_login"))
+                ctx.json(apiController.getStreamsUserLogin(ctx.pathParam("user_login")))
             }
         }
     }
