@@ -15,9 +15,19 @@ class UsersController(private val apiController: ApiController, private val user
                 ctx.json(apiController.getUsersById(ctx.pathParam("id").toInt()))
             }
             post("/signup/:login") {ctx ->
+                // pega o dado do usuario a partir do login
                 val dataUser = apiController.getUsersByLogin(ctx.pathParam("login")) as DataUser
-                dataUser.id
+                // inserir usuario no banco
+                // pega todas as streams dele
+                // inserir as streams no banco
+
             }
+            post("/update/streams/:login") {ctx ->
+                // verificar se tem esse usuário cadastrado no banco
+                // pega todas as streams a partir do login
+                // inserir as novas, caso tiver.
+            }
+
         }
     }
 }
