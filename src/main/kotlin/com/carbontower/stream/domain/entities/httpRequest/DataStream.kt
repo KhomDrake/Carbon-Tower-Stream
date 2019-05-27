@@ -20,5 +20,5 @@ data class DataStream(
     @SerializedName("user_name")
     val userName: String?,
     @SerializedName("viewer_count")
-    val viewerCount: Int?
+    val viewerCount: Int
 )
