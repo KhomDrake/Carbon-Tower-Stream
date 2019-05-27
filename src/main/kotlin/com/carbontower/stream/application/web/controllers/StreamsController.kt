@@ -2,11 +2,12 @@ package com.carbontower.stream.application.web.controllers
 
 import com.carbontower.stream.domain.entities.httpRequest.Game
 import com.carbontower.stream.domain.entities.httpRequest.Streams
+import com.carbontower.stream.domain.services.streams.StreamsService
 import com.carbontower.stream.resources.api.ApiController
 import io.javalin.apibuilder.ApiBuilder.get
 import io.javalin.apibuilder.ApiBuilder.path
 
-class StreamsController(private val apiController: ApiController) {
+class StreamsController(private val apiController: ApiController, private val streamsService: StreamsService) {
     fun routes() {
         path("/streams") {
             get(":quantity") { ctx ->

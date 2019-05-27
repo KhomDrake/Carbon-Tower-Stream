@@ -1,10 +1,11 @@
 package com.carbontower.stream.application.web.controllers
 
 import com.carbontower.stream.domain.entities.httpRequest.DataUser
+import com.carbontower.stream.domain.services.users.UsersService
 import com.carbontower.stream.resources.api.ApiController
 import io.javalin.apibuilder.ApiBuilder.*
 
-class UsersController(private val apiController: ApiController) {
+class UsersController(private val apiController: ApiController, private val usersService: UsersService) {
     fun routes() {
         path("/users") {
             get("/login/:login") {ctx ->
