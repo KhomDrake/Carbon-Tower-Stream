@@ -5,52 +5,80 @@ import com.carbontower.stream.domain.entities.httpRequest.Streams
 import com.carbontower.stream.domain.entities.httpRequest.TopGames
 import com.carbontower.stream.domain.entities.httpRequest.Users
 import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.ResponseResultOf
 import com.github.kittinunf.fuel.gson.responseObject
 
 class ApiController {
     private val clientID = "h8dui5jedtu6y4milo86gsrih87o8x"
+    private val errorGame = Game(listOf())
+    private val errorTopGames = TopGames(listOf(), null)
+    private val errorStreams = Streams(listOf(), null)
+    private val errorUsers = Users(listOf())
 
-    fun getTopGames() = Fuel.get("https://api.twitch.tv/helix/games/top")
-        .header("Client-ID", clientID)
-        .responseObject<TopGames>().third.get()
+    fun getGameById(gameId: Int) = httpRequestFuel(
+        "https://api.twitch.tv/helix/games?id=$gameId",
+        error = errorGame
+    )
 
-    fun getTopGamesQuantity(quantity: Int) = Fuel.get("https://api.twitch.tv/helix/games/top?first=$quantity")
-        .header("Client-ID", clientID)
-        .responseObject<TopGames>().third.get()
+    fun getTopGames() = httpRequestFuel("https://api.twitch.tv/helix/games/top", error = errorTopGames)
 
-    fun getGameById(gameId: Int) = Fuel.get("https://api.twitch.tv/helix/games?id=$gameId")
-        .header("Client-ID", clientID)
-        .responseObject<Game>().third.get()
+    fun getTopGamesQuantity(quantity: Int) = httpRequestFuel(
+        url = "https://api.twitch.tv/helix/games/top?first=$quantity",
+        error = errorTopGames
+    )
 
-    fun getGameByName(name: String) = Fuel.get("https://api.twitch.tv/helix/games?name=$name")
-        .header("Client-ID", clientID)
-        .responseObject<Game>().third.get()
+    fun getGameByName(name: String) = httpRequestFuel(
+        "https://api.twitch.tv/helix/games?name=$name",
+        error = errorGame
+    )
 
-    fun getStreamsQuantity(quantity: Int) = Fuel.get("https://api.twitch.tv/helix/streams?first=$quantity")
-        .header("Client-ID", clientID)
-        .responseObject<Streams>().third.get()
+    fun getStreamsQuantity(quantity: Int) = httpRequestFuel(
+        "https://api.twitch.tv/helix/streams?first=$quantity",
+        error = errorStreams
+    )
 
-    fun getStreamsGameId(gameId: Int) = Fuel.get("https://api.twitch.tv/helix/streams?game_id=$gameId")
-        .header("Client-ID", clientID)
-        .responseObject<Streams>().third.get()
+    fun getStreamsGameId(gameId: Int) = httpRequestFuel(
+        "https://api.twitch.tv/helix/streams?game_id=$gameId",
+        error = errorStreams
+    )
 
-    fun getStreamsLanguage(language: String) = Fuel.get("https://api.twitch.tv/helix/streams?language=$language")
-        .header("Client-ID", clientID)
-        .responseObject<Streams>().third.get()
+    fun getStreamsLanguage(language: String) = httpRequestFuel(
+        "https://api.twitch.tv/helix/streams?language=$language",
+        error = errorStreams
+    )
 
-    fun getStreamsUserLogin(login: String) = Fuel.get("https://api.twitch.tv/helix/streams?user_id=$login")
-        .header("Client-ID", clientID)
-        .responseObject<Streams>().third.get()
+    fun getStreamsUserLogin(login: String) = httpRequestFuel(
+        "https://api.twitch.tv/helix/streams?user_id=$login",
+        error = errorStreams
+    )
 
-    fun getStreamsUserId(userId: Int) = Fuel.get("https://api.twitch.tv/helix/streams?user_login=$userId")
-        .header("Client-ID", clientID)
-        .responseObject<Streams>().third.get()
+    fun getStreamsUserId(userId: Int) = httpRequestFuel(
+        "https://api.twitch.tv/helix/streams?user_login=$userId",
+        error = errorStreams
+    )
 
-    fun getUsersByLogin(login: String) = Fuel.get("https://api.twitch.tv/helix/users?login=$login")
-        .header("Client-ID", clientID)
-        .responseObject<Users>().third.get()
+    fun getUsersByLogin(login: String) = httpRequestFuel(
+        "https://api.twitch.tv/helix/users?login=$login",
+        error = errorUsers
+    )
 
-    fun getUsersById(userId: Int) = Fuel.get("https://api.twitch.tv/helix/users?id=$userId")
-    .header("Client-ID", clientID)
-    .responseObject<Users>().third.get()
+    fun getUsersById(userId: Int) = httpRequestFuel(
+        "https://api.twitch.tv/helix/users?id=$userId",
+        error = errorUsers
+    )
+
+    private inline fun <reified T : Any> httpRequestFuel(
+        url: String,
+        clientID: String = "h8dui5jedtu6y4milo86gsrih87o8x", error: T
+    ): Any {
+        val result = Fuel.get(url)
+            .header("Client-ID", clientID)
+            .responseObject<T>()
+
+        return if (result.third.component2() == null) {
+            result.third.get()
+        } else {
+            error
+        }
+    }
 }
