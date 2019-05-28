@@ -14,7 +14,7 @@ class UsersController(private val apiController: ApiStream, private val usersSer
             get("/login/:login", toJson { userByLogin(it) })
             get("/id/:id", toJson { userById(it) })
             post("/signup/:login/:id-user-role", toJson { signupUserStreamAndStreams(it) })
-            post("/update/streams/:login/:id-user-role", toJson { updateUserStreams(it) })
+            post("/update/streams/:login", toJson { updateUserStreams(it) })
         }
     }
 
@@ -50,7 +50,6 @@ class UsersController(private val apiController: ApiStream, private val usersSer
     }
 
     private fun updateUserStreams(ctx: Context) : Boolean {
-        val idUserRole = ctx.pathParam("login").toInt()
         val dataUsers = apiController.getUsersByLogin(ctx.pathParam("login"))
         dataUsers.data?.forEach {
             val dataUser = it

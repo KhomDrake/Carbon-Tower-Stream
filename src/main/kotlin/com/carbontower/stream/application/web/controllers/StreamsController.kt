@@ -2,13 +2,13 @@ package com.carbontower.stream.application.web.controllers
 
 import com.carbontower.stream.application.web.insertLogSuccess
 import com.carbontower.stream.application.web.toJson
+import com.carbontower.stream.domain.entities.application.Stream
 import com.carbontower.stream.domain.entities.httpRequest.Game
 import com.carbontower.stream.domain.entities.httpRequest.Streams
 import com.carbontower.stream.domain.services.streams.StreamsService
 import com.carbontower.stream.resources.api.ApiStream
 import io.javalin.Context
-import io.javalin.apibuilder.ApiBuilder.get
-import io.javalin.apibuilder.ApiBuilder.path
+import io.javalin.apibuilder.ApiBuilder.*
 
 class StreamsController(private val apiController: ApiStream, private val streamsService: StreamsService) {
     fun routes() {
@@ -19,7 +19,21 @@ class StreamsController(private val apiController: ApiStream, private val stream
             get("/user-id/:user_id", toJson { streamsByIdUser(it) })
             get("/user-login/:user_login", toJson { streamsByUserLogin(it) })
             get("/games/db", toJson { streamsByGamesDatabase(it) })
+            post("/championship/:idchampionship/:idstream", toJson {  })
+            get("/by-id-user-role/:id-user-role", toJson {  })
         }
+    }
+
+    private fun linkStreamWithChampionship(ctx: Context) : Boolean {
+        val idChampionship = ctx.pathParam("idchampionship").toInt()
+        val idStream = ctx.pathParam("idstream").toInt()
+        streamsService.linkStreamWithChampionship(idChampionship, idStream)
+        return true
+    }
+
+    private fun streamsByIdUserRole(ctx: Context) : List<Stream> {
+        val listOfStream = listOf<Stream>()
+        return listOfStream
     }
 
     private fun streamsTopQuantity(ctx: Context) : Streams {
