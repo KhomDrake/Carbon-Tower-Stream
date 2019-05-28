@@ -1,4 +1,4 @@
 package com.carbontower.stream.domain.services.games
 
-class GamesRepository {
+class GamesRepository : IGamesRepository {
 }

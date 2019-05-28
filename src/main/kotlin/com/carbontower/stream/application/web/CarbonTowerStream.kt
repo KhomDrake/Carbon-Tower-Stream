@@ -12,6 +12,7 @@ import io.javalin.Javalin
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.StandAloneContext
 import org.koin.standalone.inject
+import java.lang.Exception
 
 class CarbonTowerStream : KoinComponent {
     private lateinit var javalin: Javalin
@@ -34,7 +35,12 @@ class CarbonTowerStream : KoinComponent {
 
         javalin = Javalin.create()
         javalin.apply {
-            //            exception(Exception::class.java, Handler())
+            exception(Exception::class.java) { e, ctx ->
+                when(e) {
+                    is CarbonTowerStreamException -> HandlerError.handleCarbonTowerException(ctx, e)
+                    else ->  HandlerError.anyOtherError(ctx, e)
+                }
+            }
             routes {
                 gamesController.routes()
                 streamsController.routes()

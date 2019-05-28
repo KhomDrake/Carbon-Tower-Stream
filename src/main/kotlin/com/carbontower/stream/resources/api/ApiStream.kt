@@ -1,14 +1,16 @@
 package com.carbontower.stream.resources.api
 
+import com.carbontower.stream.application.web.CarbonTowerStreamException
 import com.carbontower.stream.domain.entities.httpRequest.Game
 import com.carbontower.stream.domain.entities.httpRequest.Streams
 import com.carbontower.stream.domain.entities.httpRequest.TopGames
 import com.carbontower.stream.domain.entities.httpRequest.Users
+import com.carbontower.stream.resources.exception.ApiError
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.ResponseResultOf
 import com.github.kittinunf.fuel.gson.responseObject
 
-class ApiController {
+class ApiStream {
     private val clientID = "h8dui5jedtu6y4milo86gsrih87o8x"
     private val errorGame = Game(listOf())
     private val errorTopGames = TopGames(listOf(), null)
@@ -18,54 +20,54 @@ class ApiController {
     fun getGameById(gameId: Int) = httpRequestFuel(
         "https://api.twitch.tv/helix/games?id=$gameId",
         error = errorGame
-    )
+    ) as Game
 
-    fun getTopGames() = httpRequestFuel("https://api.twitch.tv/helix/games/top", error = errorTopGames)
+    fun getTopGames() = httpRequestFuel("https://api.twitch.tv/helix/games/top", error = errorTopGames) as TopGames
 
     fun getTopGamesQuantity(quantity: Int) = httpRequestFuel(
         url = "https://api.twitch.tv/helix/games/top?first=$quantity",
         error = errorTopGames
-    )
+    ) as TopGames
 
-    fun getGameByName(name: String) = httpRequestFuel(
+    fun getGameByName(name: String) : Game = httpRequestFuel(
         "https://api.twitch.tv/helix/games?name=$name",
         error = errorGame
-    )
+    ) as Game
 
     fun getStreamsQuantity(quantity: Int) = httpRequestFuel(
         "https://api.twitch.tv/helix/streams?first=$quantity",
         error = errorStreams
-    )
+    ) as Streams
 
     fun getStreamsGameId(gameId: Int) = httpRequestFuel(
         "https://api.twitch.tv/helix/streams?game_id=$gameId",
         error = errorStreams
-    )
+    ) as Streams
 
     fun getStreamsLanguage(language: String) = httpRequestFuel(
         "https://api.twitch.tv/helix/streams?language=$language",
         error = errorStreams
-    )
+    ) as Streams
 
     fun getStreamsUserLogin(login: String) = httpRequestFuel(
         "https://api.twitch.tv/helix/streams?user_id=$login",
         error = errorStreams
-    )
+    ) as Streams
 
     fun getStreamsUserId(userId: Int) = httpRequestFuel(
         "https://api.twitch.tv/helix/streams?user_login=$userId",
         error = errorStreams
-    )
+    ) as Streams
 
     fun getUsersByLogin(login: String) = httpRequestFuel(
         "https://api.twitch.tv/helix/users?login=$login",
         error = errorUsers
-    )
+    ) as Users
 
     fun getUsersById(userId: Int) = httpRequestFuel(
         "https://api.twitch.tv/helix/users?id=$userId",
         error = errorUsers
-    )
+    ) as Users
 
     private inline fun <reified T : Any> httpRequestFuel(
         url: String,
@@ -78,7 +80,7 @@ class ApiController {
         return if (result.third.component2() == null) {
             result.third.get()
         } else {
-            error
+            throw ApiError(result.third.component2()?.message.toString())
         }
     }
 }

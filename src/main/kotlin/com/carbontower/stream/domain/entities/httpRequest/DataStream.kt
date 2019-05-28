@@ -7,8 +7,8 @@ data class DataStream(
     val communityIds: List<String>?,
     @SerializedName("game_id")
     val gameId: String?,
-    val id: String?,
-    val language: String?,
+    val id: Int,
+    val language: String,
     @SerializedName("started_at")
     val startedAt: String?,
     @SerializedName("thumbnail_url")

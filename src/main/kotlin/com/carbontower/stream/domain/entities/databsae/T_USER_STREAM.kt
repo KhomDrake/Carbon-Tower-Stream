@@ -7,6 +7,5 @@ object T_USER_STREAM : Table() {
     val login = varchar("login", length = 30)
     val displayName = varchar("displayName", length = 30)
     val viewCount = integer("viewCount")
-    val profileImageUrl = varchar("profileImageUrl", length = 100)
     val idUserRole_fk = integer("idUserRole_fk") references T_USER_ROLE.idUserRole
 }
