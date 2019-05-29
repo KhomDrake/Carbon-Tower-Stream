@@ -1,8 +1,7 @@
 package com.carbontower.stream.domain.services.streams
 
-import com.carbontower.stream.domain.services.exceptions.ChampionshipNotExist
-import com.carbontower.stream.domain.services.exceptions.LinkChampionshipWithStreamAlreadyExist
-import com.carbontower.stream.domain.services.exceptions.StreamNotExist
+import com.carbontower.stream.domain.entities.application.Stream
+import com.carbontower.stream.domain.services.exceptions.*
 
 class StreamsService(private val streamsRepository: IStreamsRepository) {
     fun linkStreamWithChampionship(idChampionship: Int, idStream: Int) {
@@ -12,5 +11,29 @@ class StreamsService(private val streamsRepository: IStreamsRepository) {
             throw LinkChampionshipWithStreamAlreadyExist(idChampionship, idStream)
 
         streamsRepository.insertLinkChampionshipWithStream(idChampionship, idStream)
+    }
+
+    fun streamsByIdUserRole(idUserRole: Int): List<Stream> {
+
+        if(streamsRepository.existIdUserRole(idUserRole).not()) throw UserNotExist(idUserRole)
+
+        if(streamsRepository.existTwitchAccount(idUserRole).not()) throw NotExistTwitchAccount(idUserRole)
+
+        val idsUserStream = streamsRepository.getIdsUserStreams(idUserRole)
+
+        return streamsRepository.streamsByIdsStream(idsUserStream)
+    }
+
+    fun streamsByIdUserRoleAndLogin(idUserRole: Int, login: String): List<Stream> {
+
+        if(streamsRepository.existIdUserRole(idUserRole).not()) throw UserNotExist(idUserRole)
+
+        if(streamsRepository.existTwitchAccount(idUserRole).not()) throw NotExistTwitchAccount(idUserRole)
+
+        if(streamsRepository.existAccountWithLogin(idUserRole, login).not()) throw NotExistTwitchAccountLogin(idUserRole, login)
+
+        val idUserStream = streamsRepository.getIdUserStreams(idUserRole, login)
+
+        return streamsRepository.streamsByIdStream(idUserStream)
     }
 }

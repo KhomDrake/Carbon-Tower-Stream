@@ -19,8 +19,9 @@ class StreamsController(private val apiController: ApiStream, private val stream
             get("/user-id/:user_id", toJson { streamsByIdUser(it) })
             get("/user-login/:user_login", toJson { streamsByUserLogin(it) })
             get("/games/db", toJson { streamsByGamesDatabase(it) })
-            post("/championship/:idchampionship/:idstream", toJson {  })
-            get("/by-id-user-role/:id-user-role", toJson {  })
+            post("/championship/:idchampionship/:idstream", toJson { linkStreamWithChampionship(it) })
+            get("/by-id-user-role/:id-user-role", toJson { streamsByIdUserRole(it) })
+            get("/by-id-user-role-and-login/:id-user-role/:login", toJson { streamsByIdUserRoleAndLogin(it) })
         }
     }
 
@@ -28,11 +29,23 @@ class StreamsController(private val apiController: ApiStream, private val stream
         val idChampionship = ctx.pathParam("idchampionship").toInt()
         val idStream = ctx.pathParam("idstream").toInt()
         streamsService.linkStreamWithChampionship(idChampionship, idStream)
+        ctx.insertLogSuccess("Cadastro de Link entre stream e campeonato com sucesso. Stream: $idStream," +
+                " Campeonato: $idChampionship")
         return true
     }
 
     private fun streamsByIdUserRole(ctx: Context) : List<Stream> {
-        val listOfStream = listOf<Stream>()
+        val idUserRole = ctx.pathParam("id-user-role").toInt()
+        val listOfStream: List<Stream> = streamsService.streamsByIdUserRole(idUserRole)
+        ctx.insertLogSuccess("Todas as Streams do usuário de idUserRole $idUserRole pegos com sucesso.")
+        return listOfStream
+    }
+
+    private fun streamsByIdUserRoleAndLogin(ctx: Context) : List<Stream> {
+        val idUserRole = ctx.pathParam("id-user-role").toInt()
+        val login = ctx.pathParam("login")
+        val listOfStream: List<Stream> = streamsService.streamsByIdUserRoleAndLogin(idUserRole, login)
+        ctx.insertLogSuccess("Streams do usuário de idUserRole $idUserRole e Login $login pegos com sucesso.")
         return listOfStream
     }
 

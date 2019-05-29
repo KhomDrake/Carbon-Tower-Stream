@@ -13,8 +13,8 @@ import com.github.kittinunf.fuel.gson.responseObject
 class ApiStream {
     private val clientID = "h8dui5jedtu6y4milo86gsrih87o8x"
     private val errorGame = Game(listOf())
-    private val errorTopGames = TopGames(listOf(), null)
-    private val errorStreams = Streams(listOf(), null)
+    private val errorTopGames = TopGames(listOf())
+    private val errorStreams = Streams(listOf())
     private val errorUsers = Users(listOf())
 
     fun getGameById(gameId: Int) = httpRequestFuel(
