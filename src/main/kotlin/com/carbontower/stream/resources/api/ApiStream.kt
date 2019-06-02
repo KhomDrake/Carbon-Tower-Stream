@@ -39,7 +39,7 @@ class ApiStream {
         error = errorStreams
     ) as Streams
 
-    fun getStreamsGameId(gameId: Int) = httpRequestFuel(
+    fun getStreamsGameId(gameId: String) = httpRequestFuel(
         "https://api.twitch.tv/helix/streams?game_id=$gameId",
         error = errorStreams
     ) as Streams
@@ -54,7 +54,7 @@ class ApiStream {
         error = errorStreams
     ) as Streams
 
-    fun getStreamsUserId(userId: Int) = httpRequestFuel(
+    fun getStreamsUserId(userId: String) = httpRequestFuel(
         "https://api.twitch.tv/helix/streams?user_login=$userId",
         error = errorStreams
     ) as Streams
@@ -64,7 +64,7 @@ class ApiStream {
         error = errorUsers
     ) as Users
 
-    fun getUsersById(userId: Int) = httpRequestFuel(
+    fun getUsersById(userId: String) = httpRequestFuel(
         "https://api.twitch.tv/helix/users?id=$userId",
         error = errorUsers
     ) as Users

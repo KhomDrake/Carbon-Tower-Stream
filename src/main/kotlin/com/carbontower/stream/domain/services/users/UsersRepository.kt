@@ -43,8 +43,8 @@ class UsersRepository : IUsersRepository {
         return exist
     }
 
-    override fun streamUserStream(dataUser: DataUser): List<Int> {
-        val listIds = mutableListOf<Int>()
+    override fun streamUserStream(dataUser: DataUser): List<String> {
+        val listIds = mutableListOf<String>()
 
         transaction {
             val listStreams = (T_USER_STREAM innerJoin T_STREAM).select {

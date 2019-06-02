@@ -4,7 +4,7 @@ import com.carbontower.stream.domain.entities.application.Stream
 import com.carbontower.stream.domain.services.exceptions.*
 
 class StreamsService(private val streamsRepository: IStreamsRepository) {
-    fun linkStreamWithChampionship(idChampionship: Int, idStream: Int) {
+    fun linkStreamWithChampionship(idChampionship: Int, idStream: String) {
         if(streamsRepository.existChampionship(idChampionship).not()) throw ChampionshipNotExist(idChampionship)
         if(streamsRepository.existStream(idStream).not()) throw StreamNotExist(idStream)
         if(streamsRepository.existLinkChampionshipWithStream(idStream, idChampionship).not())

@@ -25,7 +25,7 @@ class UsersController(private val apiController: ApiStream, private val usersSer
     }
 
     private fun userById(ctx: Context) : Users {
-        val userById = apiController.getUsersById(ctx.pathParam("id").toInt())
+        val userById = apiController.getUsersById(ctx.pathParam("id"))
         ctx.insertLogSuccess("User Pelo Id ${ctx.pathParam("id").toInt()}, pego com sucesso")
         return userById
     }

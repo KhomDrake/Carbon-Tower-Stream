@@ -7,5 +7,5 @@ interface IUsersRepository {
     fun insertUsersStream(dataUser: DataUser, idUserRole: Int)
     fun insertStream(dataUser: DataUser, dataStream: DataStream)
     fun existUserStream(dataUser: DataUser): Boolean
-    fun streamUserStream(dataUser: DataUser): List<Int>
+    fun streamUserStream(dataUser: DataUser): List<String>
 }

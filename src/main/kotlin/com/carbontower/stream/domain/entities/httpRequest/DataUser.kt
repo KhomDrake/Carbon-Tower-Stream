@@ -9,7 +9,7 @@ data class DataUser(
     @SerializedName("display_name")
     val displayName: String,
     val email: String?,
-    val id: Int,
+    val id: String,
     val login: String,
     @SerializedName("offline_image_url")
     val offlineImageUrl: String?,

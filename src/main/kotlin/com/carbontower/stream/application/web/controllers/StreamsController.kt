@@ -3,12 +3,14 @@ package com.carbontower.stream.application.web.controllers
 import com.carbontower.stream.application.web.insertLogSuccess
 import com.carbontower.stream.application.web.toJson
 import com.carbontower.stream.domain.entities.application.Stream
-import com.carbontower.stream.domain.entities.httpRequest.Game
-import com.carbontower.stream.domain.entities.httpRequest.Streams
+import com.carbontower.stream.domain.entities.databsae.T_USER_ROLE
+import com.carbontower.stream.domain.entities.httpRequest.*
 import com.carbontower.stream.domain.services.streams.StreamsService
 import com.carbontower.stream.resources.api.ApiStream
 import io.javalin.Context
 import io.javalin.apibuilder.ApiBuilder.*
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class StreamsController(private val apiController: ApiStream, private val streamsService: StreamsService) {
     fun routes() {
@@ -27,7 +29,7 @@ class StreamsController(private val apiController: ApiStream, private val stream
 
     private fun linkStreamWithChampionship(ctx: Context) : Boolean {
         val idChampionship = ctx.pathParam("idchampionship").toInt()
-        val idStream = ctx.pathParam("idstream").toInt()
+        val idStream = ctx.pathParam("idstream")
         streamsService.linkStreamWithChampionship(idChampionship, idStream)
         ctx.insertLogSuccess("Cadastro de Link entre stream e campeonato com sucesso. Stream: $idStream," +
                 " Campeonato: $idChampionship")
@@ -51,13 +53,13 @@ class StreamsController(private val apiController: ApiStream, private val stream
 
     private fun streamsTopQuantity(ctx: Context) : Streams {
         val streamsTopQuantity = apiController.getStreamsQuantity(ctx.pathParam("quantity").toInt())
-        ctx.insertLogSuccess("Quantidade de ${ctx.pathParam("quantity").toInt()} Top Streams pegos com sucesso")
+        ctx.insertLogSuccess("Quantidade de ${ctx.pathParam("quantity")} Top Streams pegos com sucesso")
         return streamsTopQuantity
     }
 
     private fun streamsByIdGame(ctx: Context) : Streams {
-        val streamsByIdGame = apiController.getStreamsGameId(ctx.pathParam("game_id").toInt())
-        ctx.insertLogSuccess("Streams pelo Id Game ${ctx.pathParam("game_id").toInt()} pego com sucesso")
+        val streamsByIdGame = apiController.getStreamsGameId(ctx.pathParam("game_id"))
+        ctx.insertLogSuccess("Streams pelo Id Game ${ctx.pathParam("game_id")} pego com sucesso")
         return streamsByIdGame
     }
 
@@ -68,8 +70,8 @@ class StreamsController(private val apiController: ApiStream, private val stream
     }
 
     private fun streamsByIdUser(ctx: Context) : Streams {
-        val streamsByIdUser = apiController.getStreamsUserId(ctx.pathParam("user_id").toInt())
-        ctx.insertLogSuccess("Streams pelo Id User ${ctx.pathParam("user_id").toInt()} pego com sucesso")
+        val streamsByIdUser = apiController.getStreamsUserId(ctx.pathParam("user_id"))
+        ctx.insertLogSuccess("Streams pelo Id User ${ctx.pathParam("user_id")} pego com sucesso")
         return streamsByIdUser
     }
 
@@ -93,29 +95,90 @@ class StreamsController(private val apiController: ApiStream, private val stream
             "Starcraft 2"
         )
 
+        val streamsGeral = mutableListOf<DataStream>()
+        val idUsers = mutableListOf<String>()
+        val dataUsers = mutableListOf<DataUser>()
+
         listOfGames.forEach {
             val game: Game = apiController.getGameByName(it)
-            game.data?.first().apply {
-                val dataGame = this ?: return@apply
-                val streams: Streams = apiController.getStreamsGameId(dataGame.id.toInt())
-                streams.data?.forEach {
-                    if(it.language == "en" || it.language == "pt") {
-                        println(
-                            "insert into T_STREAM values ('${it.id}', " +
-                                    "'${it.language.trim()}'," +
-                                    "'${it.title?.trim()}'," +
-                                    "'${it.type?.trim()}'," +
-                                    "'${it.userId?.trim()}'," +
-                                    "'${it.gameId?.trim()}'," +
-                                    "'${it.userName?.trim()}'," +
-                                    "${it.viewerCount}," +
-                                    "'${it.thumbnailUrl}'," +
-                                    "3)"
-                        )
+
+            if(game.data.isNullOrEmpty().not()) {
+                game.data?.first().apply {
+                    val dataGame = this ?: return@apply
+                    val streams: Streams = apiController.getStreamsGameId(dataGame.id)
+
+
+                    if (streams.data.isNullOrEmpty().not()) {
+                        streams.data?.forEach {
+                            if (it.language == "en" || it.language == "pt") {
+                                streamsGeral.add(it)
+                                idUsers.add(it.userId)
+                                //                        println(
+                                //                            "insert into T_STREAM values ('${it.id}', " +
+                                //                                    "'${it.language.trim()}'," +
+                                //                                    "'${it.title?.trim()}'," +
+                                //                                    "'${it.type?.trim()}'," +
+                                //                                    "'${it.userId?.trim()}'," +
+                                //                                    "'${it.gameId?.trim()}'," +
+                                //                                    "'${it.userName?.trim()}'," +
+                                //                                    "${it.viewerCount}," +
+                                //                                    "'${it.thumbnailUrl}'," +
+                                //                                    "3)"
+                                //                        )
+                            }
+                        }
                     }
                 }
             }
         }
+        println(idUsers.count())
+        println(idUsers)
+        idUsers.forEach {
+            val users : Users = apiController.getUsersById(it)
+            if(users.data.isNullOrEmpty().not()) {
+                Thread.sleep(10000)
+                users.data?.forEach {
+                    val dataUser = it
+                    dataUsers.add(dataUser)
+                }
+            }
+        }
+
+        val idEmpresas = mutableListOf<Int>()
+
+        transaction {
+            val users = T_USER_ROLE.select { T_USER_ROLE.idRole_fk.eq(1) }
+
+            users.forEach {
+                idEmpresas.add(it[T_USER_ROLE.idUserRole])
+            }
+        }
+
+        val quantityLogins = dataUsers.count() / idEmpresas.count()
+        var idEmpresa = 0
+        for(i in 0 until idUsers.count()) {
+            val dataUser = dataUsers[i]
+            println("insert into T_USER_STREAM values (${dataUser.id}, '${dataUser.login}', '${dataUser.displayName}', ${dataUser.viewCount}, $idEmpresa)")
+            if(i % quantityLogins == 0) {
+                idEmpresa++
+            }
+        }
+
+        var idDataUser = 0
+        streamsGeral.forEach {
+            println(
+                    "insert into T_STREAM values ('${it.id}', " +
+                            "'${it.language.trim()}'," +
+                            "'${it.title?.trim()}'," +
+                            "${dataUsers[idDataUser].id}," +
+                            "${it.viewerCount})"
+                )
+
+            idDataUser++
+            if(idDataUser == dataUsers.count())
+                idDataUser = 0
+        }
+
         ctx.insertLogSuccess("Streams pelos jogos no banco de dados, pego com sucesso")
         return true
     }

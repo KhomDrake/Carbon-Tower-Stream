@@ -4,14 +4,14 @@ import com.carbontower.stream.domain.entities.application.Stream
 
 interface IStreamsRepository {
     fun existChampionship(idChampionship: Int): Boolean
-    fun existStream(idStream: Int): Boolean
-    fun existLinkChampionshipWithStream(idStream: Int, idChampionship: Int): Boolean
-    fun insertLinkChampionshipWithStream(idChampionship: Int, idStream: Int)
+    fun existStream(idStream: String): Boolean
+    fun existLinkChampionshipWithStream(idStream: String, idChampionship: Int): Boolean
+    fun insertLinkChampionshipWithStream(idChampionship: Int, idStream: String)
     fun existIdUserRole(idUserRole: Int): Boolean
-    fun streamsByIdStream(idUserStream: Int): List<Stream>
-    fun streamsByIdsStream(idsUserStream: List<Int>): List<Stream>
+    fun streamsByIdStream(idUserStream: String): List<Stream>
+    fun streamsByIdsStream(idsUserStream: List<String>): List<Stream>
     fun existTwitchAccount(idUserRole: Int): Boolean
-    fun getIdsUserStreams(idUserRole: Int): List<Int>
+    fun getIdsUserStreams(idUserRole: Int): List<String>
     fun existAccountWithLogin(idUserRole: Int, login: String): Boolean
-    fun getIdUserStreams(idUserRole: Int, login: String): Int
+    fun getIdUserStreams(idUserRole: Int, login: String): String
 }

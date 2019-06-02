@@ -7,7 +7,7 @@ data class DataStream(
     val communityIds: List<String>?,
     @SerializedName("game_id")
     val gameId: String?,
-    val id: Int,
+    val id: String,
     val language: String,
     @SerializedName("started_at")
     val startedAt: String?,
@@ -16,7 +16,7 @@ data class DataStream(
     val title: String?,
     val type: String?,
     @SerializedName("user_id")
-    val userId: String?,
+    val userId: String,
     @SerializedName("user_name")
     val userName: String?,
     @SerializedName("viewer_count")
