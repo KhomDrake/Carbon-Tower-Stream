@@ -21,7 +21,7 @@ class StreamsController(private val apiController: ApiStream, private val stream
             get("/user-id/:user_id", toJson { streamsByIdUser(it) })
             get("/user-login/:user_login", toJson { streamsByUserLogin(it) })
             get("/games/db", toJson { streamsByGamesDatabase(it) })
-            get("/streams/:idchampionship", toJson {  })
+            get("/championship/:idchampionship", toJson { streamsByIdChampionship(it) })
             post("/championship/:idchampionship/:idstream", toJson { linkStreamWithChampionship(it) })
             get("/by-id-user-role/:id-user-role", toJson { streamsByIdUserRole(it) })
             get("/by-id-user-role-and-login/:id-user-role/:login", toJson { streamsByIdUserRoleAndLogin(it) })

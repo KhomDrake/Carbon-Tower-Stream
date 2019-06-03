@@ -7,8 +7,14 @@ import com.carbontower.stream.common.koin.auxiliaryModule
 import com.carbontower.stream.common.koin.controllerModule
 import com.carbontower.stream.common.koin.repositoryModule
 import com.carbontower.stream.common.koin.serviceModule
+import com.carbontower.stream.domain.entities.databsae.T_STREAM
+import com.carbontower.stream.domain.entities.databsae.T_STREAM_OF_CHAMPION
 import com.carbontower.stream.resources.database.Connection
 import io.javalin.Javalin
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.StandAloneContext
 import org.koin.standalone.inject
@@ -41,13 +47,14 @@ class CarbonTowerStream : KoinComponent {
                     else ->  HandlerError.anyOtherError(ctx, e)
                 }
             }
+            enableCorsForAllOrigins()
             routes {
                 gamesController.routes()
                 streamsController.routes()
                 usersController.routes()
             }
         }
-        javalin.start(3000)
+        javalin.start(8000)
 
         javalin.after {
                 ctx ->
