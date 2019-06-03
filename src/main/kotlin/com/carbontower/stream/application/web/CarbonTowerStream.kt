@@ -48,6 +48,12 @@ class CarbonTowerStream : KoinComponent {
             }
         }
         javalin.start(3000)
+
+        javalin.after {
+                ctx ->
+
+            ctx.header("Access-Control-Allow-Credentials", "true")
+        }
     }
 
     fun stopServer() {
