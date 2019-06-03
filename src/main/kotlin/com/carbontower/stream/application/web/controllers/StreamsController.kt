@@ -21,10 +21,17 @@ class StreamsController(private val apiController: ApiStream, private val stream
             get("/user-id/:user_id", toJson { streamsByIdUser(it) })
             get("/user-login/:user_login", toJson { streamsByUserLogin(it) })
             get("/games/db", toJson { streamsByGamesDatabase(it) })
+            get("/streams/:idchampionship", toJson {  })
             post("/championship/:idchampionship/:idstream", toJson { linkStreamWithChampionship(it) })
             get("/by-id-user-role/:id-user-role", toJson { streamsByIdUserRole(it) })
             get("/by-id-user-role-and-login/:id-user-role/:login", toJson { streamsByIdUserRoleAndLogin(it) })
         }
+    }
+
+    private fun streamsByIdChampionship(ctx: Context) : List<Stream> {
+        val idChampionship = ctx.pathParam("idchampionship").toInt()
+        val streams = streamsService.streamsByIdChampionship(idChampionship)
+        return streams
     }
 
     private fun linkStreamWithChampionship(ctx: Context) : Boolean {

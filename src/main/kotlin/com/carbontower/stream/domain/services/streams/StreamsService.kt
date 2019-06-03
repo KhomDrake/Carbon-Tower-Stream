@@ -36,4 +36,10 @@ class StreamsService(private val streamsRepository: IStreamsRepository) {
 
         return streamsRepository.streamsByIdStream(idUserStream)
     }
+
+    fun streamsByIdChampionship(idChampionship: Int): List<Stream> {
+        if(streamsRepository.existChampionship(idChampionship).not()) throw ChampionshipNotExist(idChampionship)
+
+        return streamsRepository.streamsByIdChampionship(idChampionship)
+    }
 }

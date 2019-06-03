@@ -8,6 +8,28 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class StreamsRepository : IStreamsRepository {
+    override fun streamsByIdChampionship(idChampionship: Int): List<Stream> {
+        val streams = mutableListOf<Stream>()
+
+        transaction {
+            val streamsDb = (T_STREAM_OF_CHAMPION innerJoin T_STREAM).select {
+                T_STREAM_OF_CHAMPION.idChampionship_fk.eq(idChampionship)
+            }
+
+            streamsDb.forEach {
+                streams.add(Stream(
+                    it[T_STREAM.idStream],
+                    it[T_STREAM.language],
+                    it[T_STREAM.title],
+                    it[T_STREAM.idUserStream_fk],
+                    it[T_STREAM.viewCount]
+                ))
+            }
+        }
+
+        return streams
+    }
+
     override fun streamsByIdsStream(idsUserStream: List<String>): List<Stream> {
         val streams = mutableListOf<Stream>()
 

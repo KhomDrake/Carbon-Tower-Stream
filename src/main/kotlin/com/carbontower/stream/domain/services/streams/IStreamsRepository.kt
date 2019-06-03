@@ -14,4 +14,5 @@ interface IStreamsRepository {
     fun getIdsUserStreams(idUserRole: Int): List<String>
     fun existAccountWithLogin(idUserRole: Int, login: String): Boolean
     fun getIdUserStreams(idUserRole: Int, login: String): String
+    fun streamsByIdChampionship(idChampionship: Int): List<Stream>
 }
